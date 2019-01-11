@@ -21,7 +21,7 @@
     {
         <script>
             $(function () {
-                window.open('@Url.Content("~/reports/" + ViewBag.ReportName)', '_blank');
+                window.open('@("http://" + Request.Url.Host + Url.Content("~/reports/" + ViewBag.ReportName))', '_blank');
             });
         </script>
     }
