@@ -1,8 +1,10 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace lbfox.Models
 {
+    [Table("History")]
     public class History
     {
         [Key]

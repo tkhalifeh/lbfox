@@ -96,10 +96,12 @@ namespace lbfox.Controllers
 
                         ctx.History.Add(new History()
                         {
-                            UserId = User.Identity.GetUserId<int>(),
+                            UserId = user.Id,
                             Vin = model.Vincode,
                             DateCreated = DateTime.UtcNow
                         });
+
+                        var test = ctx.History.ToList();
 
                         await ctx.SaveChangesAsync();
                     }
