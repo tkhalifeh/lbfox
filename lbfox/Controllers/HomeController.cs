@@ -1,10 +1,11 @@
-﻿using lbfox.ViewModels;
+﻿using lbfox.Models;
+using lbfox.ViewModels;
 using Microsoft.AspNet.Identity;
-using Microsoft.Owin.Security;
+using Microsoft.AspNet.Identity.Owin;
 using RestSharp;
 using System;
+using System.Collections.Generic;
 using System.IO;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Hosting;
@@ -14,48 +15,15 @@ namespace lbfox.Controllers
 {
     public class HomeController : Controller
     {
-        private IAuthenticationManager AuthenticationManager
-        {
-            get
-            {
-                return HttpContext.GetOwinContext().Authentication;
-            }
-        }
-
-        public ActionResult Login()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        public ActionResult Login(LoginViewModel model)
-        {
-            if ((model.Username == "bobcell" && model.Password == "bobcell123")
-                || (model.Username == "mohsen" && model.Password == "mohsen123"))
-            {
-                var identity = new ClaimsIdentity(
-                    DefaultAuthenticationTypes.ApplicationCookie, 
-                    ClaimsIdentity.DefaultNameClaimType, 
-                    ClaimsIdentity.DefaultRoleClaimType);
-
-                identity.AddClaim(new Claim(ClaimTypes.Name, model.Username));
-
-                AuthenticationManager.SignIn(new AuthenticationProperties() { IsPersistent = false }, identity);
-                return RedirectToAction("Form");
-            }
-
-            return View();
-        }
-
         [Authorize]
-        public ActionResult Form()
+        public ActionResult Index()
         {
             return View();
         }
 
         [HttpPost]
         [Authorize]
-        public async Task<ActionResult> Form(VincodeViewModel model)
+        public async Task<ActionResult> Index(VincodeViewModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -87,10 +55,7 @@ namespace lbfox.Controllers
                     }
 
                     if (fileInfo.Directory?.Exists == false) fileInfo.Directory?.Create();
-                    html = html
-                       .Replace("href=\"", "href=\"/")
-                       .Replace("content=\"", "content=\"/")
-                       .Replace("src=\"", "src=\"/");
+                    html = html.Replace("</head>", "<base href=\"/\" /></head>");
 
                     using (var fs = fileInfo.CreateText())
                     {
@@ -105,10 +70,43 @@ namespace lbfox.Controllers
             return View();
         }
 
-        public ActionResult Logout()
+        public PartialViewResult Header(string activeMenu)
         {
-            AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
-            return RedirectToAction("Login");
+            HeaderViewModel model = new HeaderViewModel()
+            {
+                IsAuthenticated = User.Identity.IsAuthenticated,
+                Menu = new List<MenuItem>()
+            };
+
+            if (model.IsAuthenticated)
+            {
+                var userMgr = HttpContext.GetOwinContext().Get<ApplicationUserManager>();
+                var user = userMgr.FindByName(User.Identity.Name);
+
+                model.Points = user.RemaingPoints;
+                model.Name = User.Identity.Name;
+                model.Menu.Add(new MenuItem()
+                {
+                    Name = "Car History Report",
+                    Link = Url.Action("Index", "Home", null)
+                });
+
+                if (User.IsInRole("admin"))
+                {
+                    model.Menu.Add(new MenuItem()
+                    {
+                        Name = "Manage Users",
+                        Link = Url.Action("Users", "Admin", null)
+                    });
+                }
+            }
+
+            model.Menu?.ForEach(i =>
+            {
+                if (i.Name == activeMenu) i.Active = true;
+            });
+
+            return PartialView("_Header", model);
         }
     }
 }

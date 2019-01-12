@@ -3,32 +3,22 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title</title>
+    <title>LBFox - @ViewBag.Title</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/jqueryval")
+    @RenderSection("header", required: false)
 </head>
 <body>
-    <div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom box-shadow">
-        <h5 class="my-0 mr-md-auto font-weight-normal">LBFox</h5>
-        @if (User.Identity.IsAuthenticated)
-        {
-            using (Html.BeginForm("Logout", "Home"))
-            {
-                <span class="p-2 text-dark">@User.Identity.Name</span>
-                <button type="submit" class="btn btn-outline-primary">Log out</button>
-            }
-        }
-    </div>
-    <div class="container body-content">
+    @{ Html.RenderAction("Header", "Home", new { ViewBag.ActiveMenu });}
+    <main class="container" role="main">
+        <h1 class="mt-5">@ViewBag.Title</h1>
         @RenderBody()
         <hr />
         <footer>
             <p>&copy; @DateTime.Now.Year LBFox</p>
         </footer>
-    </div>
-
-
+    </main>
     @Scripts.Render("~/bundles/bootstrap")
     @RenderSection("scripts", required: false)
 </body>

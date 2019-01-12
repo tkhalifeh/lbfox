@@ -1,0 +1,117 @@
+﻿@model lbfox.ViewModels.UserGridViewModel
+
+@{
+    ViewBag.Title = "Manage Users";
+    ViewBag.ActiveMenu = "Manage Users";
+}
+
+@section header
+{
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.18/css/dataTables.bootstrap4.css" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.2.2/css/responsive.bootstrap4.css" />
+}
+
+<table class="table" id="myTable">
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Username</th>
+            <th scope="col">Remaining points</th>
+            <th scope="col">Account Status</th>
+            <th scope="col">History</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{ var counter = 1;}
+        @foreach (var user in Model.Users)
+        {
+            <tr>
+                <th scope="row">@(counter++)</th>
+                <td>
+                    <a data-toggle="modal" data-target="#fillPointsModel" href="#" data-username="@user.UserName" data-points="@user.RemaingPoints">@user.UserName</a>
+                </td>
+                <td>@user.RemaingPoints</td>
+                <td>@(user.Disabled ? "inactive" : "active")</td>
+                <td><a href="#">view</a></td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="modal fade" id="fillPointsModel" tabindex="-1" role="dialog" aria-labelledby="fillPointsModelLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="fillPointsModelLabel">Modify points</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label for="input-points" class="col-form-label">Points:</label>
+                        <input type="number" class="form-control" id="input-points" name="points">
+                        <input type="hidden" class="form-control" id="input-username" name="username">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.18/js/jquery.dataTables.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.18/js/dataTables.bootstrap4.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/responsive/2.2.2/js/dataTables.responsive.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#myTable').DataTable({
+                "columnDefs": [{
+                    "targets": 3,
+                    "orderable": false
+                },
+                {
+                    "targets": 4,
+                    "orderable": false
+                }],
+                paging: false
+            });
+
+            $('#fillPointsModel').on('show.bs.modal',
+                function(event) {
+                    var button = $(event.relatedTarget); // Button that triggered the modal
+                    var data = {
+                        username: button.data('username'),
+                        points: button.data('points')
+                    };
+
+                    // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
+                    // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+                    var modal = $(this).data('data', data);
+
+                    modal.find('.modal-title').text('Modify ' + data.username + ' points');
+                    modal.find('#input-points').val(data.points);
+                    modal.find('#input-username').val(data.username);
+                });
+
+            $('#fillPointsModel .modal-footer .btn-primary').on('click',
+                function (event) {
+                    $.ajax({
+                        method: 'post',
+                        url: '@Url.Action("EditPoints", "Admin")',
+                        dataType: "json",
+                        data: $('#fillPointsModel form').serialize()
+                    }).done(function(response) {
+                        if (response.success) {
+                            document.location.reload()
+                        }
+                    });
+                });
+        });
+    </script>
+}
