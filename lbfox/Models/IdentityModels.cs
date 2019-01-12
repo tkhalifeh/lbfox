@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNet.Identity;
+﻿using System.Data.Entity;
+using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -27,6 +28,8 @@ namespace lbfox.Models
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser, CustomRole,
         int, CustomUserLogin, CustomUserRole, CustomUserClaim>
     {
+        public IDbSet<History> History { get; set; }
+
         public ApplicationDbContext()
             : base("DefaultConnection")
         {

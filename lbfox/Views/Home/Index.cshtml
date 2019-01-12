@@ -15,16 +15,16 @@
     </div>
     
     <button type="submit" value="submit" class="btn btn-primary">Submit</button>
-    
+    <div class="form-group row"></div>
     <div class="form-group row">
         <div class="col-md-12">@Html.ValidationSummary()</div>
     </div>
 
-    if (ViewBag.Success == true)
+    if (Model != null && Model.IsSuccess)
     {
         <script>
             (function () {
-                var win = window.open('@Url.Content("~/reports/" + ViewBag.ReportName)', '_blank');
+                var win = window.open('@Url.Content("~/reports/" + Model.ReportName)', '_blank');
                 win.focus();
             })();
         </script>

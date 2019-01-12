@@ -5,7 +5,9 @@ using Microsoft.AspNet.Identity.Owin;
 using RestSharp;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Hosting;
@@ -15,6 +17,14 @@ namespace lbfox.Controllers
 {
     public class HomeController : Controller
     {
+        private ApplicationUserManager _userManager;
+
+        public ApplicationUserManager UserManager
+        {
+            get => _userManager ?? HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
+            private set => _userManager = value;
+        }
+
         [Authorize]
         public ActionResult Index()
         {
@@ -27,8 +37,22 @@ namespace lbfox.Controllers
         {
             if (!ModelState.IsValid)
             {
-                ViewBag.Error = "invalid";
+                ModelState.AddModelError("", "check fields");
                 return View(model);
+            }
+
+            ApplicationUser user = null;
+            if (!User.IsInRole("admin"))
+            {
+                using (var ctx = new ApplicationDbContext())
+                {
+                    user = await ctx.Users.SingleAsync(u => u.UserName == User.Identity.Name);
+                    if (user?.RemaingPoints >= 2 == false)
+                    {
+                        ModelState.AddModelError("", "Insufficient points, contact administrator");
+                        return View(model);
+                    }
+                }
             }
 
             var vincode = model.Vincode.ToUpper();
@@ -50,7 +74,7 @@ namespace lbfox.Controllers
 
                     if (html.IndexOf("<title>", StringComparison.InvariantCultureIgnoreCase) < 0)
                     {
-                        ModelState.AddModelError("invalid_vin_code", "invalid vin code");
+                        ModelState.AddModelError("", "invalid vin code");
                         return View(model);
                     }
 
@@ -63,11 +87,29 @@ namespace lbfox.Controllers
                     }
                 }
 
-                ViewBag.Success = true;
-                ViewBag.ReportName = fileInfo.Name;
+                if (user != null)
+                {
+                    using (var ctx = new ApplicationDbContext())
+                    {
+                        ctx.Users.Attach(user);
+                        user.RemaingPoints -= 2;
+
+                        ctx.History.Add(new History()
+                        {
+                            UserId = User.Identity.GetUserId<int>(),
+                            Vin = model.Vincode,
+                            DateCreated = DateTime.UtcNow
+                        });
+
+                        await ctx.SaveChangesAsync();
+                    }
+                }
+
+                model.IsSuccess = true;
+                model.ReportName = fileInfo.Name;
             }
 
-            return View();
+            return View(model);
         }
 
         public PartialViewResult Header(string activeMenu)

@@ -11,32 +11,37 @@
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.2.2/css/responsive.bootstrap4.css" />
 }
 
-<table class="table" id="myTable">
-    <thead>
-        <tr>
-            <th scope="col">#</th>
-            <th scope="col">Username</th>
-            <th scope="col">Remaining points</th>
-            <th scope="col">Account Status</th>
-            <th scope="col">History</th>
-        </tr>
-    </thead>
-    <tbody>
-        @{ var counter = 1;}
-        @foreach (var user in Model.Users)
-        {
+<div class="row">
+    <div class="col-md-12">
+        @Html.ActionLink("Create User", "Register", "Admin", null, new { @class = "btn-secondary btn btn-sm float-right" })
+        <table class="table" id="myTable">
+            <thead>
             <tr>
-                <th scope="row">@(counter++)</th>
-                <td>
-                    <a data-toggle="modal" data-target="#fillPointsModel" href="#" data-username="@user.UserName" data-points="@user.RemaingPoints">@user.UserName</a>
-                </td>
-                <td>@user.RemaingPoints</td>
-                <td>@(user.Disabled ? "inactive" : "active")</td>
-                <td><a href="#">view</a></td>
+                <th scope="col">#</th>
+                <th scope="col">Username</th>
+                <th scope="col">Remaining points</th>
+                <th scope="col">Account Status</th>
+                <th scope="col">History</th>
             </tr>
-        }
-    </tbody>
-</table>
+            </thead>
+            <tbody>
+            @{ var counter = 1;}
+            @foreach (var user in Model.Users)
+            {
+                <tr>
+                    <th scope="row">@(counter++)</th>
+                    <td>
+                        <a data-toggle="modal" data-target="#fillPointsModel" href="#" data-username="@user.UserName" data-points="@user.RemaingPoints">@user.UserName</a>
+                    </td>
+                    <td>@user.RemaingPoints</td>
+                    <td>@(user.Disabled ? "inactive" : "active")</td>
+                    <td><a href="#">view</a></td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>
 
 <div class="modal fade" id="fillPointsModel" tabindex="-1" role="dialog" aria-labelledby="fillPointsModelLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">

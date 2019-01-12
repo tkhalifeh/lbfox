@@ -1,10 +1,9 @@
-﻿using System;
-using System.Data.Entity.Migrations;
-using System.Linq;
-using lbfox.Models;
+﻿using lbfox.Models;
 using lbfox.ViewModels;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
+using System;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -63,8 +62,16 @@ namespace lbfox.Controllers
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
-                    model.IsSuccess = true;
-                    model.Message = "user created successfully";
+                    var roleResult = await UserManager.AddToRoleAsync(user.Id, "customer");
+                    if (roleResult.Succeeded)
+                    {
+                        return RedirectToAction("Users");
+
+                    }
+                    else
+                    {
+                        AddErrors(roleResult);
+                    }
                 }
                 else
                 {
