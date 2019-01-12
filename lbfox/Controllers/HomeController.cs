@@ -92,7 +92,7 @@ namespace lbfox.Controllers
                     using (var ctx = new ApplicationDbContext())
                     {
                         ctx.Users.Attach(user);
-                        user.RemaingPoints -= 2;
+                        user.RemaingPoints -= 1;
 
                         ctx.History.Add(new History()
                         {
@@ -100,8 +100,6 @@ namespace lbfox.Controllers
                             Vin = model.Vincode,
                             DateCreated = DateTime.UtcNow
                         });
-
-                        var test = ctx.History.ToList();
 
                         await ctx.SaveChangesAsync();
                     }

@@ -4,10 +4,12 @@ html {
     position: relative;
     min-height: 100%;
 }
+
 body {
     /* Margin bottom by footer height */
     margin-bottom: 60px;
 }
+
 .footer {
     position: absolute;
     bottom: 0;
@@ -34,4 +36,13 @@ body > .container {
 
 code {
     font-size: 80%;
+}
+
+@media screen and (max-width: 767px) {
+    div#myTable_wrapper.dataTables_wrapper div.dataTables_length,
+    div#myTable_wrapper.dataTables_wrapper div.dataTables_filter,
+    div#myTable_wrapper.dataTables_wrapper div.dataTables_info,
+    div#myTable_wrapper.dataTables_wrapper div.dataTables_paginate {
+        text-align: left;
+    }
 }
