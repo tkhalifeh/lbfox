@@ -3,22 +3,22 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title - My ASP.NET Application</title>
+    <title>@ViewBag.Title</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/jqueryval")
 </head>
 <body>
-    <div class="navbar navbar-inverse navbar-fixed-top">
-        <div class="container">
-            <div class="navbar-header">
-                <a href="#" area="" class="navbar-brand">LBFox</a>
-            </div>
-            <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li>@Html.ActionLink("Home", "Form", "Home")</li>
-                </ul>
-            </div>
-        </div>
+    <div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom box-shadow">
+        <h5 class="my-0 mr-md-auto font-weight-normal">LBFox</h5>
+        @if (User.Identity.IsAuthenticated)
+        {
+            using (Html.BeginForm("Logout", "Home"))
+            {
+                <span class="p-2 text-dark">@User.Identity.Name</span>
+                <button type="submit" class="btn btn-outline-primary">Log out</button>
+            }
+        }
     </div>
     <div class="container body-content">
         @RenderBody()

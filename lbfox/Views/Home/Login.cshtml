@@ -9,21 +9,24 @@
 <div class="row">
     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
         <!-- Start form -->
-        @using (@Html.BeginForm())
+        @using (@Html.BeginForm(null, null, FormMethod.Post, new { autocomplete = "off" }))
         {
-            <div class="form-group">
-                @Html.LabelFor(model => model.Username)
-                @Html.TextBoxFor(model => model.Username, new { @class = "form-control", placeholder = "Username" })
+            <div class="form-row">
+                <div class="form-group col-md-3">
+                    @Html.LabelFor(model => model.Username)
+                    @Html.TextBoxFor(model => model.Username, new { @class = "form-control", placeholder = "Username", autocomplete = "off" })
+                </div>
+                <div class="form-group col-md-9"></div>
             </div>
-            <div class="form-group">
-                @Html.LabelFor(model => model.Password)
-                @Html.PasswordFor(model => model.Password, new { @class = "form-control", placeholder = "Password" })
+            <div class="form-row">
+                <div class="form-group col-md-3 align-content-center">
+                    @Html.LabelFor(model => model.Password)
+                    @Html.PasswordFor(model => model.Password, new { @class = "form-control", placeholder = "Password", autocomplete = "off" })
+                </div>
+                <div class="form-group col-md-9"></div>
             </div>
-            <div class="form-group">
-                <button type="submit" class="btn btn-primary">Submit</button>
-            </div>
-
-            @Html.ValidationSummary()
+            <button type="submit" class="btn btn-primary">Sign in</button>
+            <div class="form-row">@Html.ValidationSummary()</div>
         }
         <!-- End form -->
     </div>

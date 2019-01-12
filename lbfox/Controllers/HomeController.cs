@@ -39,8 +39,8 @@ namespace lbfox.Controllers
                     ClaimsIdentity.DefaultRoleClaimType);
 
                 identity.AddClaim(new Claim(ClaimTypes.Name, model.Username));
-                identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, model.Username));
-                AuthenticationManager.SignIn(new AuthenticationProperties() { IsPersistent = true }, identity);
+
+                AuthenticationManager.SignIn(new AuthenticationProperties() { IsPersistent = false }, identity);
                 return RedirectToAction("Form");
             }
 
@@ -63,7 +63,9 @@ namespace lbfox.Controllers
                 return View(model);
             }
 
-            var filePath = HostingEnvironment.MapPath($"~/reports/{model.Vincode}.html");
+            var vincode = model.Vincode.ToUpper();
+            var filePath = HostingEnvironment.MapPath($"~/reports/{vincode}.html");
+
             if (filePath != null)
             {
                 var fileInfo = new FileInfo(filePath);
@@ -74,7 +76,7 @@ namespace lbfox.Controllers
                     request.AddQueryParameter("mode", "login");
                     request.AddQueryParameter("login", "blue1ray1@gmail.com");
                     request.AddQueryParameter("pass", "803188692wehgwehw");
-                    request.AddQueryParameter("vin", model.Vincode);
+                    request.AddQueryParameter("vin", vincode);
                     IRestResponse result = await client.ExecuteGetTaskAsync(request);
                     var html = result.Content;
 
@@ -86,10 +88,9 @@ namespace lbfox.Controllers
 
                     if (fileInfo.Directory?.Exists == false) fileInfo.Directory?.Create();
                     html = html
-                       .Replace("href=\"", "href=\"http://antivin.su/")
-                       .Replace("content=\"", "content=\"http://antivin.su/")
-                       .Replace("src=\"", "src=\"http://antivin.su/")
-                       .Replace("http://antivin.su/carfax/imgHdr.png", "http://carfaxjo.com/carfaxFiles/imgHdr.png");
+                       .Replace("href=\"", "href=\"/")
+                       .Replace("content=\"", "content=\"/")
+                       .Replace("src=\"", "src=\"/");
 
                     using (var fs = fileInfo.CreateText())
                     {
@@ -98,10 +99,16 @@ namespace lbfox.Controllers
                 }
 
                 ViewBag.Success = true;
-                ViewBag.ReportName = $"{model.Vincode}.html";
+                ViewBag.ReportName = fileInfo.Name;
             }
 
             return View();
+        }
+
+        public ActionResult Logout()
+        {
+            AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
+            return RedirectToAction("Login");
         }
     }
 }

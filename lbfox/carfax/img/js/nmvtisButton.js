@@ -1,0 +1,1 @@
+function nmvtisButtonSetup(){if(setDisplayBasedOnPreviousNmvtisPurchase){if($("#nmvtisResultsBtn").length>0){setDisplayBasedOnPreviousNmvtisPurchase(meta("subscriberVin"),function(a){$("#nmvtisResultsBtn").text(a.id==0?"Run":"View")})}}}$(DocumentHelper.getDocument()).ready(nmvtisButtonSetup);

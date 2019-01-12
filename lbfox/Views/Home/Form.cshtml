@@ -1,6 +1,8 @@
 ﻿@model lbfox.ViewModels.VincodeViewModel
 
 @{
+    /**/
+
     ViewBag.Title = "Car History Report";
 }
 
@@ -8,21 +10,24 @@
 
 @using (Html.BeginForm())
 {
-    <div class="form-group">
-        @Html.LabelFor(model => model.Vincode, new { value = "vin code" })
-        @Html.TextBoxFor(model => model.Vincode, new { maxlength = 17, @class = "form-control" })
+    <div class="form-row">
+        <div class="form-group col-md-3">
+            @Html.LabelFor(model => model.Vincode, new { value = "vin code" })
+            @Html.TextBoxFor(model => model.Vincode, new { maxlength = 17, @class = "form-control" })
+        </div>
+        <div class="col-md-9"></div>
+        <div class="col-md-12">@Html.ValidationSummary()</div>
     </div>
-
-    @Html.ValidationSummary()
 
     <button type="submit" value="submit" class="btn btn-primary">Submit</button>
 
     if (ViewBag.Success == true)
     {
         <script>
-            $(function () {
-                window.open('@("http://" + Request.Url.Host + Url.Content("~/reports/" + ViewBag.ReportName))', '_blank');
-            });
+            (function () {
+                var win = window.open('@Url.Content("~/reports/" + ViewBag.ReportName)', '_blank');
+                win.focus();
+            })();
         </script>
     }
 }
