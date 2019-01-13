@@ -3,6 +3,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using System;
 
 namespace lbfox.Models
 {
@@ -15,6 +16,7 @@ namespace lbfox.Models
     {
         public int RemaingPoints { get; set; }
         public bool Disabled { get; set; }
+        public DateTime? DateCreated { get; set; }
 
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser, int> manager)
         {
@@ -29,6 +31,7 @@ namespace lbfox.Models
         int, CustomUserLogin, CustomUserRole, CustomUserClaim>
     {
         public IDbSet<History> History { get; set; }
+        public IDbSet<PointHistory> PointHistory { get; set; }
 
         public ApplicationDbContext()
             : base("DefaultConnection")

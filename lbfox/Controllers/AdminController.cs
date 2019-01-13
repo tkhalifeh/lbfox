@@ -58,7 +58,7 @@ namespace lbfox.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = model.Username, RemaingPoints = model.Points };
+                var user = new ApplicationUser { UserName = model.Username, RemaingPoints = model.Points, DateCreated = DateTime.UtcNow };
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
@@ -114,7 +114,24 @@ namespace lbfox.Controllers
                 using (var ctx = new ApplicationDbContext())
                 {
                     var user = ctx.Users.Single(u => u.UserName == model.Username);
-                    user.RemaingPoints = model.Points;
+
+                    var oldValue = user.RemaingPoints;
+                    var newValue = model.Points;
+
+                    user.RemaingPoints = newValue;
+
+                    var currentUserId = User.Identity.GetUserId<int>();
+                    var customerUserId = user.Id;
+
+                    ctx.PointHistory.Add(new PointHistory()
+                    {
+                        CustomerId = customerUserId,
+                        UserId = currentUserId,
+                        DateCreated = DateTime.UtcNow,
+                        OldValue = oldValue,
+                        NewValue = newValue
+                    });
+
                     await ctx.SaveChangesAsync();
                 }
 

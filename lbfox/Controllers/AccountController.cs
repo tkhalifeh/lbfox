@@ -1,5 +1,4 @@
-﻿using lbfox.Models;
-using lbfox.ViewModels;
+﻿using lbfox.ViewModels;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;

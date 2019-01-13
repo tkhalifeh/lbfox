@@ -7,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Hosting;
@@ -33,24 +32,25 @@ namespace lbfox.Controllers
 
         [HttpPost]
         [Authorize]
-        public async Task<ActionResult> Index(VincodeViewModel model)
+        public async Task<JsonResult> Index(VincodeViewModel model)
         {
             if (!ModelState.IsValid)
             {
                 ModelState.AddModelError("", "check fields");
-                return View(model);
+                return Json(ModelState);
             }
 
+            var userId = User.Identity.GetUserId<int>();
             ApplicationUser user = null;
             if (!User.IsInRole("admin"))
             {
                 using (var ctx = new ApplicationDbContext())
                 {
-                    user = await ctx.Users.SingleAsync(u => u.UserName == User.Identity.Name);
+                    user = await ctx.Users.SingleAsync(u => u.Id == userId);
                     if (user?.RemaingPoints >= 2 == false)
                     {
                         ModelState.AddModelError("", "Insufficient points, contact administrator");
-                        return View(model);
+                        return Json(ModelState);
                     }
                 }
             }
@@ -75,7 +75,7 @@ namespace lbfox.Controllers
                     if (html.IndexOf("<title>", StringComparison.InvariantCultureIgnoreCase) < 0)
                     {
                         ModelState.AddModelError("", "invalid vin code");
-                        return View(model);
+                        return Json(ModelState);
                     }
 
                     if (fileInfo.Directory?.Exists == false) fileInfo.Directory?.Create();
@@ -93,23 +93,32 @@ namespace lbfox.Controllers
                     {
                         ctx.Users.Attach(user);
                         user.RemaingPoints -= 1;
-
-                        ctx.History.Add(new History()
-                        {
-                            UserId = user.Id,
-                            Vin = model.Vincode,
-                            DateCreated = DateTime.UtcNow
-                        });
-
                         await ctx.SaveChangesAsync();
                     }
                 }
 
-                model.IsSuccess = true;
-                model.ReportName = fileInfo.Name;
+                await LogHistory(userId, model.Vincode);
+
+                model.Success = true;
+                model.ReportFile = Url.Content("~/reports/" + fileInfo.Name);
             }
 
-            return View(model);
+            return Json(model);
+        }
+
+        private async Task LogHistory(int userId, string vincode)
+        {
+            using (var ctx = new ApplicationDbContext())
+            {
+                ctx.History.Add(new History()
+                {
+                    UserId = userId,
+                    Vin = vincode,
+                    DateCreated = DateTime.UtcNow
+                });
+
+                await ctx.SaveChangesAsync();
+            }
         }
 
         public PartialViewResult Header(string activeMenu)
