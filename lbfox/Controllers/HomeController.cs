@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Hosting;
@@ -32,50 +33,45 @@ namespace lbfox.Controllers
 
         [HttpPost]
         [Authorize]
-        public async Task<JsonResult> Index(VincodeViewModel model)
+        public async Task<JsonResult> VinReport(VincodeViewModel model)
         {
             if (!ModelState.IsValid)
             {
                 ModelState.AddModelError("", "check fields");
-                return Json(ModelState);
+                return Json(ProcessModelState());
             }
 
             var userId = User.Identity.GetUserId<int>();
             ApplicationUser user = null;
-            if (!User.IsInRole("admin"))
+
+            using (var ctx = new ApplicationDbContext())
             {
-                using (var ctx = new ApplicationDbContext())
+                user = await ctx.Users.SingleAsync(u => u.Id == userId);
+
+                if (!User.IsInRole("admin") && user.RemaingPoints < 1)
                 {
-                    user = await ctx.Users.SingleAsync(u => u.Id == userId);
-                    if (user?.RemaingPoints >= 2 == false)
-                    {
-                        ModelState.AddModelError("", "Insufficient points, contact administrator");
-                        return Json(ModelState);
-                    }
+                    ModelState.AddModelError("", "Insufficient points, contact administrator");
+                    return Json(ProcessModelState());
                 }
             }
 
             var vincode = model.Vincode.ToUpper();
             var filePath = HostingEnvironment.MapPath($"~/reports/{vincode}.html");
+            var response = new VinReportResponse();
 
             if (filePath != null)
             {
                 var fileInfo = new FileInfo(filePath);
+                var fromCache = fileInfo.Exists;
+
                 if (!fileInfo.Exists)
                 {
-                    var client = new RestClient("http://antivin.su");
-                    var request = new RestRequest(Method.GET) { Resource = "en/app/getfullreportcarfax.php" };
-                    request.AddQueryParameter("mode", "login");
-                    request.AddQueryParameter("login", "blue1ray1@gmail.com");
-                    request.AddQueryParameter("pass", "803188692wehgwehw");
-                    request.AddQueryParameter("vin", vincode);
-                    IRestResponse result = await client.ExecuteGetTaskAsync(request);
-                    var html = result.Content;
+                    var html = await CarfaxReport(vincode);
 
                     if (html.IndexOf("<title>", StringComparison.InvariantCultureIgnoreCase) < 0)
                     {
                         ModelState.AddModelError("", "invalid vin code");
-                        return Json(ModelState);
+                        return Json(ProcessModelState());
                     }
 
                     if (fileInfo.Directory?.Exists == false) fileInfo.Directory?.Create();
@@ -87,26 +83,53 @@ namespace lbfox.Controllers
                     }
                 }
 
-                if (user != null)
-                {
-                    using (var ctx = new ApplicationDbContext())
-                    {
-                        ctx.Users.Attach(user);
-                        user.RemaingPoints -= 1;
-                        await ctx.SaveChangesAsync();
-                    }
-                }
+                var remaingPoints = await SubtractPoints(user);
 
-                await LogHistory(userId, model.Vincode);
+                response.ReportFile = Url.Content("~/reports/" + fileInfo.Name);
+                response.Success = true;
+                response.RemainingPoints = remaingPoints;
 
-                model.Success = true;
-                model.ReportFile = Url.Content("~/reports/" + fileInfo.Name);
+                await LogHistory(userId, model.Vincode, fromCache);
             }
 
-            return Json(model);
+            return Json(response);
         }
 
-        private async Task LogHistory(int userId, string vincode)
+        private object ProcessModelState()
+        {
+            return new
+            {
+                Success = false,
+                Validation = ModelState.Keys.Select(i => new { Key = i, ModelState[i].Errors })
+            };
+        }
+
+        private static async Task<string> CarfaxReport(string vincode)
+        {
+            var client = new RestClient("http://antivin.su");
+            var request = new RestRequest(Method.GET) { Resource = "en/app/getfullreportcarfax.php" };
+            request.AddQueryParameter("mode", "login");
+            request.AddQueryParameter("login", "blue1ray1@gmail.com");
+            request.AddQueryParameter("pass", "803188692wehgwehw");
+            request.AddQueryParameter("vin", vincode);
+            IRestResponse result = await client.ExecuteGetTaskAsync(request);
+            var html = result.Content;
+            return html;
+        }
+
+        private async Task<int?> SubtractPoints(ApplicationUser user)
+        {
+            using (var ctx = new ApplicationDbContext())
+            {
+                ctx.Users.Attach(user);
+                user.RemaingPoints -= 1;
+                await ctx.SaveChangesAsync();
+
+                return User.IsInRole("admin") ? (int?)null : user.RemaingPoints;
+            }
+        }
+
+        private async Task LogHistory(int userId, string vincode, bool fromCache)
         {
             using (var ctx = new ApplicationDbContext())
             {
@@ -114,7 +137,9 @@ namespace lbfox.Controllers
                 {
                     UserId = userId,
                     Vin = vincode,
-                    DateCreated = DateTime.UtcNow
+                    DateCreated = DateTime.UtcNow,
+                    FromCache = fromCache,
+
                 });
 
                 await ctx.SaveChangesAsync();

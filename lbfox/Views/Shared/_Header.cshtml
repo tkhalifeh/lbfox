@@ -19,7 +19,7 @@
             @if (Model.IsAuthenticated)
             {
                 <label class="col-form-label text-success" style="margin-right: 10px;">
-                    Points <strong>@Html.Raw(User.IsInRole("admin") ? "&#8734;" : Model.Points.ToString())</strong>
+                    Points <strong id="lblPoints">@Html.Raw(User.IsInRole("admin") ? "&#8734;" : Model.Points.ToString())</strong>
                 </label>
 
                 using (Html.BeginForm("Logoff", "Account", FormMethod.Post, new { @class = "form-inline mt-2 mt-md-0" }))

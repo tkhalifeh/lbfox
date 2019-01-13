@@ -16,5 +16,6 @@ namespace lbfox.Models
         public string Vin { get; set; }
 
         public DateTime DateCreated { get; set; }
+        public bool FromCache { get; set; }
     }
 }
