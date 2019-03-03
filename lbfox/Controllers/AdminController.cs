@@ -1,4 +1,5 @@
-﻿using lbfox.Models;
+﻿using lbfox.Attributes;
+using lbfox.Models;
 using lbfox.ViewModels;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
@@ -10,7 +11,7 @@ using System.Web.Mvc;
 
 namespace lbfox.Controllers
 {
-    [Authorize(Roles = "admin")]
+    [CustomAuthorize(Roles = "admin")]
     public class AdminController : Controller
     {
         public AdminController()

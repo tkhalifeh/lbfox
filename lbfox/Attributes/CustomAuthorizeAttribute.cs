@@ -8,7 +8,7 @@ namespace lbfox.Attributes
         {
             if (filterContext.HttpContext.User.Identity.IsAuthenticated)
             {
-                filterContext.Result = new ContentResult() {Content = "unauthorized"};
+                filterContext.Result = new ContentResult() { Content = "unauthorized" };
             }
             else
             {

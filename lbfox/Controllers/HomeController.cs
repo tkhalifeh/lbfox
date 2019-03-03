@@ -1,9 +1,11 @@
-﻿using lbfox.Models;
+﻿using lbfox.Attributes;
+using lbfox.Models;
 using lbfox.ViewModels;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using RestSharp;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.IO;
@@ -17,6 +19,9 @@ namespace lbfox.Controllers
 {
     public class HomeController : Controller
     {
+        public static readonly ConcurrentDictionary<string, object> vinsDic = new ConcurrentDictionary<string, object>();
+        public static readonly object mutex = new object();
+
         private ApplicationUserManager _userManager;
 
         public ApplicationUserManager UserManager
@@ -25,19 +30,26 @@ namespace lbfox.Controllers
             private set => _userManager = value;
         }
 
-        [Authorize]
+        [CustomAuthorize]
         public ActionResult Index()
         {
             return View();
         }
 
         [HttpPost]
-        [Authorize]
+        [CustomAuthorize]
         public async Task<JsonResult> VinReport(VincodeViewModel model)
         {
             if (!ModelState.IsValid)
             {
                 ModelState.AddModelError("", "check fields");
+                return Json(ProcessModelState());
+            }
+
+            var vincode = model.Vincode.ToUpper();
+            if (vinsDic.TryGetValue(vincode, out _))
+            {
+                ModelState.AddModelError("", $"Request for {vincode} is already in progress");
                 return Json(ProcessModelState());
             }
 
@@ -55,44 +67,52 @@ namespace lbfox.Controllers
                 }
             }
 
-            var vincode = model.Vincode.ToUpper();
             var filePath = HostingEnvironment.MapPath($"~/reports/{vincode}.html");
             var response = new VinReportResponse();
 
-            if (filePath != null)
+            vinsDic.TryAdd(vincode, null);
+
+            try
             {
-                var fileInfo = new FileInfo(filePath);
-                var fromCache = fileInfo.Exists;
-
-                if (!fileInfo.Exists)
+                if (filePath != null)
                 {
-                    var html = await CarfaxReport(vincode);
+                    var fileInfo = new FileInfo(filePath);
+                    var fromCache = fileInfo.Exists;
 
-                    if (html.IndexOf("<title>", StringComparison.InvariantCultureIgnoreCase) < 0)
+                    if (!fileInfo.Exists)
                     {
-                        ModelState.AddModelError("", "invalid vin code");
-                        return Json(ProcessModelState());
+                        var html = await CarfaxReport(vincode);
+
+                        if (html.IndexOf("<title>", StringComparison.InvariantCultureIgnoreCase) < 0)
+                        {
+                            ModelState.AddModelError("", "invalid vin code");
+                            return Json(ProcessModelState());
+                        }
+
+                        if (fileInfo.Directory?.Exists == false) fileInfo.Directory?.Create();
+                        html = html.Replace("</head>", "<base href=\"/\" /></head>");
+
+                        using (var fs = fileInfo.CreateText())
+                        {
+                            await fs.WriteAsync(html);
+                        }
                     }
 
-                    if (fileInfo.Directory?.Exists == false) fileInfo.Directory?.Create();
-                    html = html.Replace("</head>", "<base href=\"/\" /></head>");
+                    var remaingPoints = await SubtractPoints(user);
 
-                    using (var fs = fileInfo.CreateText())
-                    {
-                        await fs.WriteAsync(html);
-                    }
+                    response.ReportFile = Url.Content("~/reports/" + fileInfo.Name);
+                    response.Success = true;
+                    response.RemainingPoints = remaingPoints;
+
+                    await LogHistory(userId, model.Vincode, fromCache);
                 }
 
-                var remaingPoints = await SubtractPoints(user);
-
-                response.ReportFile = Url.Content("~/reports/" + fileInfo.Name);
-                response.Success = true;
-                response.RemainingPoints = remaingPoints;
-
-                await LogHistory(userId, model.Vincode, fromCache);
+                return Json(response);
             }
-
-            return Json(response);
+            finally
+            {
+                lock (mutex) { vinsDic.TryRemove(vincode, out _); }
+            }
         }
 
         private object ProcessModelState()
