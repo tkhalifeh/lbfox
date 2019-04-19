@@ -1,0 +1,221 @@
+.detailLineBreak {
+    clear: both;
+}
+
+/*** Point of Impact ***/
+.poi, .poi div {
+    font-size: 8px; font-family: "Helvetica"; color: #424242;
+}
+.poi {display: inline-block; padding: 5px 0;}
+.poi div {text-align: center;}
+.poi .outer {
+    background: unset !important;
+    overflow: hidden;
+    border: 1px solid #212121;
+    display: inline-block;
+    vertical-align: middle;
+    margin: 3px;
+    position: relative;
+    top: 0;
+    right: 0;
+    z-index: 0;
+
+}
+.poi .outer::after {
+    content: url("carfax/img/poi/poi-crosshatch-background-wider.svg");
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: -2;
+    width:101%;
+}
+.poi .inner {
+    margin: 11px 12px 12px 12px;
+}
+.poi .inner div:first-child {z-index: 2; position: relative; border: 1px solid #212121; box-sizing: border-box;}
+
+.poi .outer div:not(:first-child) {
+    background-color: white; position: absolute; z-index: 1;
+}
+.poi .outer .top-left      { width: 34%; height: 34%;    top: 0;    left: 0; }
+.poi .outer .top-center    { width: 34%; height: 50%;    top: 0; left:  33%; }
+.poi .outer .top-right     { width: 34%; height: 34%;    top: 0;   right: 0; }
+.poi .outer .left-center   { width: 50%; height: 34%;  top: 33%;    left: 0; }
+.poi .outer .right-center  { width: 50%; height: 34%;  top: 33%;   right: 0; }
+.poi .outer .bottom-left   { width: 34%; height: 34%; bottom: 0;    left: 0; }
+.poi .outer .bottom-center { width: 34%; height: 50%; bottom: 0; left:  33%; }
+.poi .outer .bottom-right  { width: 34%; height: 34%; bottom: 0;   right: 0; }
+
+.poi.leftfront .outer .top-left, .poi.front .outer .top-center,
+.poi.rightfront .outer .top-right {
+    background: #fff;
+    display: none;
+    top: -.2px;
+}
+.poi.leftside .outer .left-center, .poi.rightside .outer .right-center {
+    background: #fff;
+    display: none;
+}
+.poi.leftrear .outer .bottom-left, .poi.rear .outer .bottom-center, .poi.rightrear .outer .bottom-right {
+    background: #fff;
+    display: none;
+    bottom: -.2px;
+}
+
+.dmg-title{
+    font-family: "Helvetica";
+    font-weight: bold;
+    letter-spacing: -0.24px;
+    text-align:center;
+    font-size:10pt !important;
+    margin-top:10px;
+    line-height:1.7;
+}
+
+.car-container {
+    background-color: #fffbe8 !important;
+    padding: 10px !important;
+}
+
+.poi-pixel {
+    height: 100%;
+    width: 100%;
+}
+
+.image-container{
+    display:flex;
+}
+
+.poi-row{
+    display:flex;
+    min-width: 482px;
+}
+
+.poi-right-column{
+    display:flex;
+    flex-direction:column;
+    width: 237px;
+    margin-right: 5px;
+}
+
+.poi-fox-box{
+    width: 48%;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.poi-yellow-fill-container{
+    position:relative;
+    z-index: 0;
+    bottom:0;
+    width: 236px;
+    margin-left: 10px;
+    border: 1px solid #E0E0E0;
+    border-radius:3px;
+
+}
+
+.poi-container{
+    position: absolute;
+    z-index: 1;
+    top: 0;
+    width: 236px;
+    display: block;
+    background-color:unset;
+    border:none;
+    max-height: none;
+}
+
+.yellow-fill{
+    width:100%;
+    height:100%;
+    position:relative;
+    top:0;
+}
+
+.standard-fox{
+    position: relative;
+    right: 15px;
+    position: relative;
+    top: 106px;
+    height: 254px;
+}
+
+.poi-iso-fox{
+    position: relative;
+    right: 15px;
+    position: relative;
+    top: 45px;
+    height: 254px;
+}
+
+.smallest-fox{
+    padding-right: 17px;
+    margin-bottom:0;
+}
+
+.spacer-div{
+    min-height:10px;
+}
+
+.pad-for-smashed{
+    padding-left:90px;
+}
+
+.smashed-severity {
+    margin-right: 34px;
+    width: 35%;
+}
+
+.car-height {
+    height: 262px;
+}
+
+.truck-height {
+    height: 280px;
+}
+
+.van-height {
+    height: 277px;
+}
+
+.suv-height {
+    height: 279px;
+}
+
+.car-roof-height {
+    height: 262px;
+}
+
+.truck-roof-height {
+    height: 280px;
+}
+
+.van-roof-height {
+    height: 277px;
+}
+
+.suv-roof-height {
+    height: 279px;
+}
+
+/*** Ratings and Reviews ***/
+.ratings-container {
+    display:flex;
+    align-items:center;
+    word-break: normal;
+}
+.ratings-stars-container {
+    padding:2px 0 0 0;
+}
+.ratings-average-value {
+    font-weight:bold;
+}
+.ratings-average-value, .ratings-verified-reviews {
+    padding-right:4px;
+}
+
+.details-column{
+    display: flex;
+    flex-direction: column;
+}

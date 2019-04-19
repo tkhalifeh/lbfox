@@ -206,6 +206,31 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="boostrap.html" />
+    <Content Include="carfax\css\vhr-common.css" />
+    <Content Include="carfax\img\carfox_180.svg" />
+    <Content Include="carfax\img\ico_orangeCar.gif" />
+    <Content Include="carfax\img\isolated_severity_scale_fox.svg" />
+    <Content Include="carfax\img\poi-crosshatch-background.svg" />
+    <Content Include="carfax\img\poi\MinorDamageSeverity-crosshatch.svg" />
+    <Content Include="carfax\img\poi\MinorToModerateDamageSev-crosshatch.svg" />
+    <Content Include="carfax\img\poi\ModerateDamageSeverity-crosshatch.svg" />
+    <Content Include="carfax\img\poi\ModerateToSevereDamageSev-crosshatch.svg" />
+    <Content Include="carfax\img\poi\poi-car-white.svg" />
+    <Content Include="carfax\img\poi\poi-car-yellow.svg" />
+    <Content Include="carfax\img\poi\poi-crosshatch-background.svg" />
+    <Content Include="carfax\img\poi\poi-suv-white.svg" />
+    <Content Include="carfax\img\poi\poi-suv-yellow.svg" />
+    <Content Include="carfax\img\poi\poi-truck-yellow.svg" />
+    <Content Include="carfax\img\poi\poi-truck.svg" />
+    <Content Include="carfax\img\poi\poi-van-yellow.svg" />
+    <Content Include="carfax\img\poi\SevereDamageSeverity-crosshatch.svg" />
+    <Content Include="carfax\img\poi\white_pixel.png" />
+    <Content Include="carfax\img\poi\yellow_pixel.png" />
+    <Content Include="carfax\img\ratings\rr_empty_star.png" />
+    <Content Include="carfax\img\ratings\rr_full_star.png" />
+    <Content Include="carfax\img\ratings\rr_half_star.png" />
+    <Content Include="carfax\img\ratings\rr_onethird_star.png" />
+    <Content Include="carfax\img\ratings\rr_twothird_star.png" />
     <Content Include="Content\bootstrap-grid.css" />
     <Content Include="Content\bootstrap-grid.min.css" />
     <Content Include="Content\bootstrap-reboot.css" />
@@ -234,6 +259,7 @@
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="carfax\css\vhr_1_0.css_" />
     <None Include="Properties\PublishProfiles\CustomProfile.pubxml" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <Content Include="carfax\css\ajaxLogin.css" />

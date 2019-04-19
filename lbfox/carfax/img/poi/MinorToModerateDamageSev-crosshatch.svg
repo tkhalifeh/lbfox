@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="50px" height="18px" viewBox="0 0 50 18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 53.2 (72643) - https://sketchapp.com -->
+    <title>30</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <rect id="path-1" x="0" y="0" width="48" height="16"></rect>
+    </defs>
+    <g id="Severity-Scale-Display" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Assets" transform="translate(-1324.000000, -179.000000)">
+            <g id="30" transform="translate(1325.000000, 180.000000)">
+                <mask id="mask-2" fill="white">
+                    <use xlink:href="#path-1"></use>
+                </mask>
+                <rect stroke="#212121" x="-0.5" y="-0.5" width="49" height="17"></rect>
+                <g id="hatch" mask="url(#mask-2)" fill-rule="nonzero" stroke="#3777BC" stroke-linecap="square" stroke-width="3">
+                    <g transform="translate(-56.000000, -116.000000)">
+                        <path d="M116.5,5.50000013 L1.99885336,120.001147" id="Line-Copy-17"></path>
+                        <path d="M122.51646,5.4835405 L0.998853364,127.001147" id="Line-Copy-18"></path>
+                        <path d="M128.5,5.50000013 L1.99885336,132.001147" id="Line-Copy-19"></path>
+                        <path d="M134.5,5.50000013 L7.99885336,132.001147" id="Line-Copy-20"></path>
+                        <path d="M140.5,5.50000013 L7.99885336,138.001147" id="Line-Copy-21"></path>
+                        <path d="M139.5,12.5000001 L6.99885336,145.001147" id="Line-Copy-22"></path>
+                        <path d="M145.5,12.5000001 L4.49645408,153.503546" id="Line-Copy-23"></path>
+                        <path d="M145.5,18.5000001 L4.49645408,159.503546" id="Line-Copy-24"></path>
+                        <path d="M145.5,24.5000001 L2.49650367,167.503497" id="Line-Copy-25"></path>
+                        <path d="M145.5,30.5000001 L5.50000013,170.5" id="Line-Copy-26"></path>
+                        <path d="M145.5,36.5000001 L5.49642875,176.503572" id="Line-Copy-27"></path>
+                        <path d="M145.5,42.5000001 L4.99199324,183.008007" id="Line-Copy-28"></path>
+                        <path d="M145.5,48.5000001 L4.49645408,189.503546" id="Line-Copy-29"></path>
+                        <path d="M145.5,54.5000001 L4,196" id="Line-Copy-30"></path>
+                        <path d="M137.000933,68.9990674 L2.99210561,203.007895" id="Line-Copy-31"></path>
+                        <path d="M137.5,74.5000001 L5.49642875,206.503572" id="Line-Copy-32"></path>
+                        <path d="M137.503937,80.4960636 L10.4870974,207.512903" id="Line-Copy-33"></path>
+                        <path d="M136.504149,87.4958515 L15.9790986,208.020902" id="Line-Copy-34"></path>
+                        <path d="M138.5,91.5000001 L24.4858165,205.514184" id="Line-Copy-35"></path>
+                        <path d="M140.504444,96.4955558 L28,209" id="Line-Copy-36"></path>
+                        <path d="M144.5,98.5000001 L32.9988534,210.001147" id="Line-Copy-37"></path>
+                        <path d="M148.009698,100.990302 L31.9988534,217.001147" id="Line-Copy-38"></path>
+                        <path d="M158.008928,96.991072 L31.9988534,223.001147" id="Line-Copy-39"></path>
+                        <path d="M164.5,96.5000001 L31.9988534,229.001147" id="Line-Copy-40"></path>
+                        <path d="M164.5,102.5 L31.9988534,235.001147" id="Line-Copy-41"></path>
+                        <path d="M164.5,108.5 L31.9988534,241.001147" id="Line-Copy-42"></path>
+                        <path d="M164.5,114.5 L31.9988534,247.001147" id="Line-Copy-43"></path>
+                        <path d="M164.5,120.5 L31.9988534,253.001147" id="Line-Copy-44"></path>
+                        <path d="M164.5,126.5 L31.9988534,259.001147" id="Line-Copy-45"></path>
+                        <path d="M164.5,131.5 L31.9988534,264.001147" id="Line-Copy-46"></path>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
