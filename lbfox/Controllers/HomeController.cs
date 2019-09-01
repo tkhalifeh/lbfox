@@ -103,10 +103,20 @@ namespace lbfox.Controllers
                     response.ReportFile = Url.Content("~/reports/" + fileInfo.Name);
                     response.Success = true;
                     response.RemainingPoints = remaingPoints;
-
+                    
                     await LogHistory(userId, model.Vincode, fromCache);
                 }
 
+                return Json(response);
+            }
+            catch (Exception ex)
+            {
+                using(var fs = new StreamWriter(Server.MapPath("~/logs/" + $"{DateTime.Now.ToString("ddMMyyyy")}.txt")))
+                {
+                    await fs.WriteLineAsync(ex.ToString());
+                }
+
+                response.ErrorMessage = ex.Message;
                 return Json(response);
             }
             finally
